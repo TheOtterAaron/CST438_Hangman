@@ -10,26 +10,31 @@ namespace Hangman.Pages
         [BindProperty]
         public Guess Guess { get; set; }
 
-        public string Word { get; private set; }
+        public string Output { get; private set; }
         public int GuessCount { get; private set; }
 
         public void OnGet()
         {
-            Word = "_ _ _ _ _ _ _ _";
             GuessCount = 0;
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            GuessCount = Guess.Count;
+
             if (ModelState.IsValid)
             {
+                HiddenWord hiddenWord = new HiddenWord("computer");
+                hiddenWord.Reveal(Guess.Character);
+                Output = hiddenWord.ToString();
+
                 if (Guess.Count >= 7)
                 {
-                    Word = "Out of Guesses!";
+                    Output = "Out of Guesses!";
                     return Page();
                 }
 
-                GuessCount = Guess.Count + 1;
+                GuessCount++;
             }
 
             return Page();

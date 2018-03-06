@@ -5,10 +5,10 @@
 <html>
 <body>
     <p>Enter a guess.</p>
-    <p>@Model.Word</p>
+    <p>@Model.Output</p>
     <div asp-validation-summary="All"></div>
     <form method="POST">
-        <input asp-for="Guess.Count" value="@Model.GuessCount" type="hidden" />
+        <input asp-for="Guess.Count" value="@Model.GuessCount" />
         <div>Character: <input asp-for="Guess.Character" /></div>
         <input type="submit" />
     </form>
