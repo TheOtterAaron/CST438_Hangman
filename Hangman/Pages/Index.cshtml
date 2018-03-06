@@ -8,7 +8,7 @@
     <p>@Model.Output</p>
     <div asp-validation-summary="All"></div>
     <form method="POST">
-        <input asp-for="Guess.Count" value="@Model.GuessCount" />
+        <input asp-for="Guess.Count" value="@Model.Guess.Count" />
         <div>Character: <input asp-for="Guess.Character" /></div>
         <input type="submit" />
     </form>

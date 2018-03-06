@@ -11,17 +11,16 @@ namespace Hangman.Pages
         public Guess Guess { get; set; }
 
         public string Output { get; private set; }
-        public int GuessCount { get; private set; }
 
         public void OnGet()
         {
-            GuessCount = 0;
+            Guess = new Guess();
+            Guess.Count = 0;
+            Guess.Character = ' ';
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            GuessCount = Guess.Count;
-
             if (ModelState.IsValid)
             {
                 HiddenWord hiddenWord = new HiddenWord("computer");
@@ -34,7 +33,7 @@ namespace Hangman.Pages
                     return Page();
                 }
 
-                GuessCount++;
+                Guess.Count++;
             }
 
             return Page();
