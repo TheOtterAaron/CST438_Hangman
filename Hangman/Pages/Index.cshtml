@@ -1,8 +1,16 @@
 ﻿@page
-@using Hangman.Pages
-@model Index
+@model Hangman.Pages.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-<h1>Hello, world!</h1>
-<p>
-    @Model.Message
-</p>
+<html>
+<body>
+    <p>Enter a guess.</p>
+    <p>@Model.Word</p>
+    <div asp-validation-summary="All"></div>
+    <form method="POST">
+        <input asp-for="Guess.Count" value="@Model.GuessCount" type="hidden" />
+        <div>Character: <input asp-for="Guess.Character" /></div>
+        <input type="submit" />
+    </form>
+</body>
+</html>
