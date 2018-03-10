@@ -9,6 +9,7 @@ namespace Hangman.Data
         public int Id { get; set; }
         public string Phrase { get; private set; }
         public string GuessesString { get; private set; }
+        public int IncorrectGusses { get; set; }
 
         [NotMapped]
         public List<char> Guesses
@@ -32,6 +33,7 @@ namespace Hangman.Data
         {
             Phrase = "computer";
             GuessesString = "";
+            IncorrectGusses = 0;
         }
     }
 }

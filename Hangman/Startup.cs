@@ -22,7 +22,8 @@ namespace Hangman
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
+            app.UseStaticFiles();
             app.UseMvc();
         }
     }

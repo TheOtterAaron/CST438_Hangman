@@ -40,40 +40,54 @@ namespace Hangman.Pages
         {
             Game = await m_db.Games.FindAsync(id);
 
+            HiddenWord hiddenWord = new HiddenWord(Game.Phrase, Game.Guesses);
+
             if (ModelState.IsValid)
             {
                 List<char> guesses = Game.Guesses;
-
-                if (guesses.Count > 7)
-                {
-                    Message = "You've run out of guesses!";
-                    return Page();
-                }
+                bool validGuess = true;
 
                 foreach (char prevGuess in guesses)
                 {
                     if (Guess == prevGuess)
                     {
-                        Message = "You already guessed '" + Guess + "'";
-                        return Page();
+                        Message = "You already guessed '" + Guess + "'.";
+                        validGuess = false;
                     }
                 }
 
-                guesses.Add(Guess);
-                Game.Guesses = guesses;
+                if (validGuess)
+                {
+                    guesses.Add(Guess);
+                    Game.Guesses = guesses;
 
-                try
-                {
-                    await m_db.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw new System.Exception($"Game {Game.Id} not found!");
+                    if (!hiddenWord.Reveal(Guess))
+                    {
+                        Game.IncorrectGusses++;
+                    }
+
+                    try
+                    {
+                        await m_db.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        throw new System.Exception($"Game {Game.Id} not found!");
+                    }
                 }
             }
-
-            HiddenWord hiddenWord = new HiddenWord(Game.Phrase, Game.Guesses);
+            
             Phrase = hiddenWord.ToString();
+
+            if (hiddenWord.IsRevealed())
+            {
+                Message = "Congratulations, you've won!";
+            }
+            else if (Game.IncorrectGusses >= 7)
+            {
+                Game.IncorrectGusses = 7;
+                Message = "You've run out of guesses.";
+            }
 
             return Page();
         }

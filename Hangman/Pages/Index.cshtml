@@ -4,6 +4,7 @@
 
 <html>
 <body>
+    <div><img src="~/images/hangman-@(Model.Game.IncorrectGusses).gif" /></div>
     <p>@Model.Phrase</p>
     <p>@Model.Message</p>
     <div asp-validation-summary="All"></div>
