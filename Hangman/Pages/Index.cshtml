@@ -4,13 +4,12 @@
 
 <html>
 <body>
-    <p>Enter a guess.</p>
-    <p>@Model.Output</p>
+    <p>@Model.Phrase</p>
+    <p>@Model.Message</p>
     <div asp-validation-summary="All"></div>
     <form method="POST">
-        <input asp-for="Guess.Count" value="@Model.Guess.Count" />
-        <div>Character: <input asp-for="Guess.Character" /></div>
-        <input type="submit" />
+        <div>Enter a Guess: <input asp-for="Guess" /></div>
+        <input type="submit" asp-route-id="@Model.Game.Id" />
     </form>
 </body>
 </html>
