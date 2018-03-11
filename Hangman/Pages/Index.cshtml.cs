@@ -56,7 +56,9 @@ namespace Hangman.Pages
             HiddenWord hiddenWord = new HiddenWord(Game.Phrase, Game.Guesses);
             Phrase = hiddenWord.ToString();
             
-            if (ModelState.IsValid && Game.IncorrectGuesses < 7)
+            if (ModelState.IsValid &&
+                !hiddenWord.IsRevealed() &&
+                Game.IncorrectGuesses < 7)
             {
                 // Get previous guesses
                 List<char> guesses = Game.Guesses;
