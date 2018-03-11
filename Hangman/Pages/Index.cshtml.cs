@@ -60,6 +60,9 @@ namespace Hangman.Pages
                 !hiddenWord.IsRevealed() &&
                 Game.IncorrectGuesses < 7)
             {
+                // Enforce lower case
+                Guess = char.ToLower(Guess);
+
                 // Get previous guesses
                 List<char> guesses = Game.Guesses;
 
