@@ -5,109 +5,113 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Hangman.Data;
 using Microsoft.AspNetCore.Hosting;
-using System;
-using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Hangman.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly AppDbContext m_db;
-        private readonly IHostingEnvironment m_env;
+        // Private (Injected) Members
+        private readonly AppDbContext _db;
+        private readonly IHostingEnvironment _env;
 
+        // Constructor
         public IndexModel(AppDbContext db, IHostingEnvironment env)
         {
-            m_db = db;
-            m_env = env;
+            _db = db;
+            _env = env;
         }
         
+        // Members
         public Game Game { get; private set; }
+        public string Phrase { get; private set; }
+        public string Message { get; private set; }
 
         [BindProperty]
         public char Guess { get; set; }
 
-        public string Phrase { get; private set; }
-        public string Message { get; private set; }
-
+        // GET Controller
         public async Task OnGetAsync()
         {
+            // Create a new Game record
             Game = new Game();
+            Game.Phrase = new PhraseGenerator(_env).GetPhrase();
 
-            string wordsFile = Path.Combine(m_env.WebRootPath, "hangmanwords.txt");
+            // Save Game record
+            _db.Games.Add(Game);
+            await _db.SaveChangesAsync();
 
-            if (System.IO.File.Exists(wordsFile))
-            {
-                string[] words = System.IO.File.ReadAllLines(wordsFile);
-
-                Random rand = new Random();
-                int randWord = rand.Next(0, words.Length);
-
-                Game.Phrase = words[randWord];
-            }
-            else
-            {
-                Game.Phrase = "computer";
-            }
-
-            m_db.Games.Add(Game);
-            await m_db.SaveChangesAsync();
-
+            // Generate Phrase
             HiddenWord hiddenWord = new HiddenWord(Game.Phrase);
             Phrase = hiddenWord.ToString();
-
-            Guess = ' ';
         }
 
+        // POST Controller
         public async Task<IActionResult> OnPostAsync(int id)
         {
-            Game = await m_db.Games.FindAsync(id);
+            // Retrieve Game record
+            Game = await _db.Games.FindAsync(id);
 
+            // Generate Phrase
             HiddenWord hiddenWord = new HiddenWord(Game.Phrase, Game.Guesses);
-
-            if (ModelState.IsValid)
+            Phrase = hiddenWord.ToString();
+            
+            if (ModelState.IsValid && Game.IncorrectGuesses < 7)
             {
+                // Get previous guesses
                 List<char> guesses = Game.Guesses;
-                bool validGuess = true;
 
+                // Guess must be a letter
+                Regex rgx = new Regex(@"^[a-zA-Z]$");
+                if (!rgx.IsMatch(Guess.ToString()))
+                {
+                    Message = "You can only guess letters.";
+                    return Page();
+                }
+
+                // Guess must be new
                 foreach (char prevGuess in guesses)
                 {
                     if (Guess == prevGuess)
                     {
                         Message = "You already guessed '" + Guess + "'.";
-                        validGuess = false;
+                        return Page();
                     }
                 }
-
-                if (validGuess)
+                
+                // Add Guess to Game record
+                guesses.Add(Guess);
+                Game.Guesses = guesses;
+                
+                if (hiddenWord.Reveal(Guess))   // Correct Guess...
                 {
-                    guesses.Add(Guess);
-                    Game.Guesses = guesses;
+                    // ...update Phrase
+                    Phrase = hiddenWord.ToString();
+                }
+                else                            // Incorrect Guess...
+                {
+                    // ...update Game record
+                    Game.IncorrectGuesses++;
+                }
 
-                    if (!hiddenWord.Reveal(Guess))
-                    {
-                        Game.IncorrectGusses++;
-                    }
-
-                    try
-                    {
-                        await m_db.SaveChangesAsync();
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        throw new System.Exception($"Game {Game.Id} not found!");
-                    }
+                // Save Game record
+                try
+                {
+                    await _db.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw new System.Exception($"Game {Game.Id} not found!");
                 }
             }
             
-            Phrase = hiddenWord.ToString();
-
-            if (hiddenWord.IsRevealed())
+            if (hiddenWord.IsRevealed())            // Check win condition
             {
                 Message = "Congratulations, you've won!";
             }
-            else if (Game.IncorrectGusses >= 7)
+            else if (Game.IncorrectGuesses >= 7)    // Check lose condition
             {
-                Game.IncorrectGusses = 7;
+                Game.IncorrectGuesses = 7;
                 Message = "You've run out of guesses.";
             }
 

@@ -2,15 +2,21 @@
 @model Hangman.Pages.IndexModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
+<!DOCTYPE html>
 <html>
+<head><title>CST 438 Hangman - Aaron Gordon</title></head>
 <body>
-    <div><img src="./images/hangman-@(Model.Game.IncorrectGusses).gif" /></div>
-    <p>@Model.Phrase</p>
-    <p>@Model.Message</p>
-    <div asp-validation-summary="All"></div>
+    <h2>Hangman</h2>
+    <img src="./images/hangman-@(Model.Game.IncorrectGuesses).gif" />
+    <h2 style="font-family:'Lucida Console', monospace">@Model.Phrase</h2>
+    <p style="color: red">@Model.Message</p>
+    <div asp-validation-summary="All" style="color: red"></div>
     <form method="POST">
-        <div>Enter a Guess: <input asp-for="Guess" /></div>
+        <div>
+            Guess a character: <input asp-for="Guess" maxlength="1" size="1" value="" />
+        </div>
         <input type="submit" asp-route-id="@Model.Game.Id" />
     </form>
+    <br/><a href=".">Start a New Game</a>
 </body>
 </html>

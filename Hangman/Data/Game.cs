@@ -8,7 +8,7 @@ namespace Hangman.Data
         public int Id { get; set; }
         public string Phrase { get; set; }
         public string GuessesString { get; private set; }
-        public int IncorrectGusses { get; set; }
+        public int IncorrectGuesses { get; set; }
 
         [NotMapped]
         public List<char> Guesses
@@ -32,7 +32,7 @@ namespace Hangman.Data
         {
             Phrase = "";
             GuessesString = "";
-            IncorrectGusses = 0;
+            IncorrectGuesses = 0;
         }
     }
 }

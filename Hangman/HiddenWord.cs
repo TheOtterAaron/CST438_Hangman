@@ -5,36 +5,15 @@ namespace Hangman
 {
     public class HiddenWord
     {
-        private class HiddenLetter
-        {
-            public char Letter
-            {
-                get;
-                private set;
-            }
-
-            public bool Revealed
-            {
-                get;
-                set;
-            }
-
-            public HiddenLetter(char letter, bool revealed)
-            {
-                Letter = letter;
-                Revealed = revealed;
-            }
-        }
-
-        private List<HiddenLetter> myWord;
+        private List<HiddenLetter> _word;
 
         public HiddenWord(string word)
         {
-            myWord = new List<HiddenLetter>();
+            _word = new List<HiddenLetter>();
 
             foreach (char c in word.ToArray<char>())
             {
-                myWord.Add(new HiddenLetter(c, false));
+                _word.Add(new HiddenLetter(c, false));
             }
         }
 
@@ -50,7 +29,7 @@ namespace Hangman
         {
             bool found = false;
 
-            foreach (HiddenLetter l in myWord)
+            foreach (HiddenLetter l in _word)
             {
                 if (l.Letter == letter)
                 {
@@ -64,7 +43,7 @@ namespace Hangman
 
         public bool IsRevealed()
         {
-            foreach (HiddenLetter l in myWord)
+            foreach (HiddenLetter l in _word)
             {
                 if (!l.Revealed)
                 {
@@ -79,7 +58,7 @@ namespace Hangman
         {
             string s = "";
 
-            foreach (HiddenLetter l in myWord)
+            foreach (HiddenLetter l in _word)
             {
                 if (l.Revealed)
                 {
