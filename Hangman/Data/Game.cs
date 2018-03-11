@@ -1,5 +1,4 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Hangman.Data
@@ -7,7 +6,7 @@ namespace Hangman.Data
     public class Game
     {
         public int Id { get; set; }
-        public string Phrase { get; private set; }
+        public string Phrase { get; set; }
         public string GuessesString { get; private set; }
         public int IncorrectGusses { get; set; }
 
@@ -31,7 +30,7 @@ namespace Hangman.Data
 
         public Game()
         {
-            Phrase = "computer";
+            Phrase = "";
             GuessesString = "";
             IncorrectGusses = 0;
         }
