@@ -15,7 +15,7 @@ namespace Hangman
             _env = env;
         }
 
-        // RandomPhrase
+        // Returns a word selected at random from the hangmanwords.txt file
         public string GetPhrase()
         {
             string wordsFile = Path.Combine(_env.WebRootPath, "hangmanwords.txt");

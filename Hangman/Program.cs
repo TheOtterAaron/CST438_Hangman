@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace Hangman
 {
+    // Entry point of the application
     public class Program
     {
         public static void Main(string[] args)
